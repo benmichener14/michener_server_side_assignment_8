@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
+        <meta charset="utf-8"/>
+        <style>
+            /*.not_flipped {background-color: #000000; color: #ffffff;}*/
+            /*.flipped_treasure {background-color: #03bc00; color: #ffffff;}*/
+            /*.flipped_sand {background-color: #f2000c; color: #ffffff;}*/
+        </style>
+    </head>
+    
+    <body>
+        <!--<h1>Treasure Hunt</h1>-->
+        <div class="container">
+            
+            <div class="jumbotron jumbotron-fluid mb-0">
+            <div class="container">
+                <h1 class="display-4">Treasure Hunt</h1>
+                <p class="lead">The only legal form of piracy!</p>
+            </div>
+            </div>        
+            <ul class="nav justify-content-start border p-2 bg-dark text-light">
+                <li class="nav-item">
+                    <a href="#" id='loginBtn' class='nav-link'>Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id='registerBtn' class='nav-link'>Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id='logoutBtn' class='nav-link'>Logout</a>
+                </li>
+                <li class="nav-item">
+                    <span id="msg"></span>
+                </li>
+            </ul>
+            
+            <h3>Current Score:</h3>
+            <h4 id="score"></h4>
+        
+        
+          <div class="row" id="gameboard">
+            <!--filled on startup-->
+          </div>
+          
+            <h3>Current Difficulty:</h3>
+            <h4 id="difficulty"></h4>
+            
+            <h3>Score to Beat:</h3>
+            <h4 id="bestScore"></h4>
+            
+            <button type="button" id='btnReset' class="btn">Reset Score</button>
+            
+            
+        </div>
+        
+        
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        
+        <!--put your modal dialogs here...-->
+        <!--Modal Dialogue Boxes-->
+        <div id="finishedGame" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">You Won!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="finishedGameText">Would you like to play again?</p>
+                        <div class="form-group">
+                            <label for="gameSize">You can change this value to change the game board size for next round!</label>
+                            <input type="Number" min="1" class="form-control" id="gameSize" name="gameSize" placeholder=10>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-dark">
+                        <button id="yes" type="button" class="btn btn-secondary" data-dismiss="modal">Yes</button>
+                        <button id="no" type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        
+        <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Login</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Login</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            </div>
+                        </form> 
+                    </div>
+                    <div class="modal-footer">
+                        <button id='confirmLoginBtn' type="button" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        
+        <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Register</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Register</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="regEmail" name="regEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
+                            </div>
+                        </form> 
+                    </div>
+                    <div class="modal-footer">
+                        <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Register</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        /* global $ */
+        // put your JavaScript code here...
+        
+        $(document).ready(function() 
+        {
+            // model ....
+            let model = {};
+
+            function initializeModel(size)
+            {
+                if(model.login === undefined) // Was trying to retrieve the data stored in the session... I'm too busy to finish figuring this out. Sorry to disappoint you, Mark
+                {
+                    getSessionData;
+                }
+                model.size = size;
+                model.count = 0;
+                model.win = false;
+                populateBoard(model.size);
+                updateView();
+            }
+            
+            // view...
+            function updateView()
+            {
+                //console.log(model);
+                updateScore();
+                if(model.login !== undefined)
+                    updateBoard(model.size);
+            }     
+            
+            function updateScore()
+            {//Scoring system. For fun. Green -> Yellow -> Orange -> Red
+                
+                if(model.login === undefined)
+                {
+                    $("#loginBtn").addClass("visible").removeClass("invisible");
+                    $("#logoutBtn").addClass("invisible").removeClass("visible");
+                    $("#registerBtn").addClass("visible").removeClass("invisible");
+                    
+                    $('#msg').text("Nobody is Logged In");
+                    $("#difficulty").text("");
+                    $("#bestScore").text("");
+                    $("#score").text("");
+                }
+                if(model.login !== undefined)
+                {
+                    $("#logoutBtn").addClass("visible").removeClass("invisible");
+                    $("#loginBtn").addClass("invisible").removeClass("visible");
+                    $("#registerBtn").addClass("invisible").removeClass("visible");
+                    
+                    $('#msg').text("Welcome " + model.login + "!");
+                    $("#difficulty").text(model.size);
+                    $("#bestScore").text(model.bestScore);
+                    $("#score").text(model.count);
+                }
+                
+                if(model.count < (model.size * 0.25))
+                {
+                     $("#score").css("color", "rgb(3, 188, 0)");
+                     $("#finishedGameText").text("Congrats! You finished in " + model.count + " guesses! That means you finished faster than average!")
+                }
+                else if(model.count < (model.size * 0.50))
+                {
+                     $("#score").css("color", "rgb(205, 211, 16)");
+                     $("#finishedGameText").text("Congrats! You finished in " + model.count + " guesses! That means you finished in average time!")
+                }
+                else if(model.count < (model.size * 0.75))
+                {
+                     $("#score").css("color", "rgb(249, 151, 4)");
+                     $("#finishedGameText").text("Congrats! You finished in " + model.count + " guesses! That means you finished slower than average...")
+                }
+                else if(model.count < (model.size * 0.85))
+                {
+                     $("#score").css("color", "rgb(249, 8, 3)");
+                     $("#finishedGameText").text("Congrats! You finished in " + model.count + " guesses! Were you even trying?")
+                }
+            }
+            
+            function updateBoard(x)
+            {
+                $('#gameboard').empty();
+                for (var i = 0; i < x; i++)
+                {
+                    let cardbody = $("<div class=\"card-body\"></div>");
+                    
+                    cardbody.attr('id', model.cards[i].id);
+                    
+                    let card = $("<div class=\"card\"></div>");
+                    let item = $("<div class=\"col-sm-6\"></div>");
+                    cardbody.attr("index", i);
+                    
+                    
+                    if(!model.cards[i].flipped)
+                    {
+                        cardbody.attr("flipped", "not_flipped");
+                        cardbody.css("background-color", "rgb(0,0,0)");
+                    }
+                    else if(model.cards[i].id === 'treasure')
+                    {
+                        cardbody.attr("flipped", "flipped_treasure");
+                        cardbody.css("background-color", "rgb(3, 188, 0)");
+                    }
+                    else
+                    {
+                        cardbody.attr("flipped", "flipped_sand");
+                        cardbody.css("background-color", "rgb(242, 0, 12)");
+                    }
+                    
+                    card.append(cardbody[0]);
+                    item.append(card[0]);
+                    
+                    item.addClass("tile");
+                    $('#gameboard').append(item);
+                }
+            }
+            
+            function populateBoard(x)
+            {
+                model.cards = [];
+                let rand = Math.floor(Math.random() * x);
+                for (var i = 0; i < x; i++)
+                {
+                    
+                    if(i === rand)
+                    {
+                        let id = {id: 'treasure', flipped: false};
+                        model.cards.push(id);
+                    }
+                    else
+                    {
+                        let id = {id: 'sand', flipped: false};
+                        model.cards.push(id);
+                    }
+                }
+                console.log("The correct one is number " + rand);
+                updateView();
+            }
+            
+            // controller ...
+            function sendRequest(url, callback)
+            {
+                var jqxhr = $.get(url);
+                jqxhr.done(function(json) 
+                {
+                    if(json.error === "Nobody is logged in.")
+                    {
+                        console.log("Nobody is logged in.");
+                    }
+                    else if(json.error === undefined & json.result[0] !== undefined)
+                        model.bestScore = json.result[0].SCORE_SCORE
+                    else if(json.result[0] === undefined)
+                    {
+                        model.bestScore = model.size;
+                    }
+                    // else
+                    //     model.error = json.error;
+                    
+                    updateView();
+                    if (callback !== undefined)
+                        callback();
+                })
+                jqxhr.fail(function(json) 
+                {
+                    let error = JSON.stringify(json);
+                    model.error = error;
+                    //updateView();
+                })
+            }
+            
+            function getSessionData() //I could get this working if I had more time, but I really don't. I have 4 other Final Projects to work on... sorry to disappoint you mark
+            {
+                let url = "whoIsLoggedIn";
+                var jqxhr = $.get(url);
+                jqxhr.done(function(json) 
+                {
+                    if(json.email !== undefined)
+                    {
+                        model.login = json.email;
+                    }
+                })
+                jqxhr.fail(function(json) 
+                {
+                    let error = JSON.stringify(json);
+                    model.error = error;
+                    //updateView();
+                })
+            }
+            
+            $(document).on("click",".card-body",function() 
+            {
+                
+                if(!model.win) // Play while you haven't won
+                {
+                    if($(this).attr("flipped") === "not_flipped")
+                    {
+                        model.count = model.count + 1;
+                    }
+                    if($(this).attr("id") === "treasure" && $(this).attr("flipped") === "not_flipped")
+                    {
+                        model.cards[$(this).attr("index")].flipped ="flipped_treasure";
+                        model.win = true;
+                        
+                        sendRequest("addScore?score="+model.count+"&difficulty="+model.size);
+                        
+                        $('#finishedGame').modal('show');
+                    }
+                    else
+                    {
+                        model.cards[$(this).attr("index")].flipped = "flipped_sand";
+                    }
+                    // console.log(model.count);
+                }
+                updateView();
+            });
+            
+            $('#yes').click(function() 
+            {
+                $('#finishedGame').modal('hide');
+                if($('#gameSize').val().trim() === "")
+                {
+                    initializeModel(10);
+                    sendRequest("buildGame?difficulty=10");
+                }
+                else
+                {
+                    model.size = $('#gameSize').val().trim();
+                    sendRequest("buildGame?difficulty="+model.size);
+                    initializeModel(model.size);
+                }
+            });
+            
+            $('#loginBtn').click(function() //Done
+            {
+                $('#password').val('');
+                $('#loginDlg').modal('show');
+            });
+
+            $('#registerBtn').click(function() //Done
+            {
+                $('#regEmail').val('');
+                $('#regPassword').val('');
+                $('#registerDlg').modal('show');
+            });
+            
+            $('#logoutBtn').click(function() //Done
+            {
+                sendRequest("logout");
+                $("#gameboard").empty();
+                model.login = undefined;
+                model.bestScore = undefined;
+            });
+            
+            $('#confirmLoginBtn').click(function() //Done
+            {
+                let email = $('#email').val().trim();
+                let password = $('#password').val().trim();
+                
+                sendRequest("login?email="+email+"&password="+password, function ()
+                {
+                    if (model.error == undefined)
+                    {
+                        model.login=email;
+                        sendRequest("buildGame?difficulty="+model.size);  
+                    }
+                });
+                $('#loginDlg').modal('hide');
+            });
+
+            $('#confirmRegisterBtn').click(function() //Done
+            {
+                let email = $('#regEmail').val().trim();
+                let password = $('#regPassword').val().trim();
+                sendRequest("register?email="+email+"&password="+password, function () 
+                { 
+                    if (model.error == undefined)
+                    {
+                        model.login=email;
+                        sendRequest("buildGame?difficulty="+model.size);  
+                    }
+                });
+                
+                $('#registerDlg').modal('hide');
+            });
+            
+            $('#btnReset').click(function() //Done
+            {
+                sendRequest("delete?difficulty="+model.size)
+                model.bestScore=model.size;
+                initializeModel(model.size);
+                
+            });
+            
+            // run...
+            initializeModel(10);
+        });
+            
+        </script>
+    </body>
+
+</html>
